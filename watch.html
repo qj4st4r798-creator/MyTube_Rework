@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sora AI Fat Cat - MyTube</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 30px;
+            background-color: #f9f9f9;
+            color: #222;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: auto;
+        }
+
+        .video-player {
+            width: 100%;
+            max-width: 800px;
+            border-radius: 10px;
+            background: black;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 20px;
+            text-decoration: none;
+            color: #0073e6;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .video-title {
+            font-size: 26px;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+
+        .stats {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .channel-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .channel-pfp {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ddd;
+        }
+
+        .channel-name {
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .description {
+            margin-top: 20px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .buttons {
+            margin-top: 20px;
+        }
+
+        .buttons button {
+            padding: 8px 16px;
+            margin-right: 10px;
+            font-size: 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background-color: #eee;
+        }
+
+        .buttons button.disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .comments {
+            margin-top: 30px;
+        }
+
+        .comments textarea,
+        .comments input {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+
+        .comments button {
+            padding: 8px 16px;
+            font-size: 14px;
+            border: none;
+            border-radius: 6px;
+            background-color: #0073e6;
+            color: white;
+            cursor: pointer;
+        }
+
+        .comment-list {
+            margin-top: 20px;
+        }
+
+        .comment-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .comment-pfp {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .comment-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .comment-text {
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a class="back" href="index.html">⬅ Back to Home</a>
+
+        <video class="video-player" controls>
+            <source src="Videos/Sora_Ai.mp4" type="video/mp4">
+        </video>
+
+        <div class="video-title">Sora AI Fat Cat</div>
+        <div class="stats">6 views • 5 days ago</div>
+
+        <div class="channel-row">
+            <img class="channel-pfp" src="Thumbnails/SuckySuckyHair.jpg">
+            <div class="channel-name">@SuckySuckyHair</div>
+        </div>
+
+        <div class="description">
+            This is the watch page for <strong>Sora AI Fat Cat</strong>.
+        </div>
+
+        <div class="buttons">
+            <button id="like-btn" onclick="likeVideo()">👍 Like (<span id="like-count">0</span>)</button>
+            <button id="dislike-btn" onclick="dislikeVideo()">👎 Dislike (<span id="dislike-count">0</span>)</button>
+        </div>
+
+        <div class="comments">
+            <h3>Comments</h3>
+
+            <input id="name-input" placeholder="Your name...">
+            <input id="pfp-input" type="file" accept="image/*">
+            <textarea id="comment-input" placeholder="Add a comment..."></textarea>
+
+            <button onclick="addComment()">Post</button>
+
+            <div class="comment-list" id="comment-list"></div>
+        </div>
+    </div>
+
+    <script>
+        const BIN_ID = "698158d6ae596e708f0cdec3";
+        const API_KEY = "$2a$10$FN20Cg3eqBFtRdBRlIfaZe9M63hiocTIGVt/vsLowxViRY6g8YzIG";
+
+        let videoData = { likes: 0, dislikes: 0, comments: [] };
+
+        const likeBtn = document.getElementById("like-btn");
+        const dislikeBtn = document.getElementById("dislike-btn");
+
+        function applyVoteState() {
+            const liked = localStorage.getItem("liked_sora") === "true";
+            const disliked = localStorage.getItem("disliked_sora") === "true";
+
+            likeBtn.disabled = liked;
+            dislikeBtn.disabled = disliked;
+
+            likeBtn.classList.toggle("disabled", liked);
+            dislikeBtn.classList.toggle("disabled", disliked);
+        }
+
+        async function loadData() {
+            const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                headers: { "X-Master-Key": API_KEY }
+            });
+
+            const data = await res.json();
+            videoData = data.record;
+
+            document.getElementById("like-count").textContent = videoData.likes;
+            document.getElementById("dislike-count").textContent = videoData.dislikes;
+
+            const list = document.getElementById("comment-list");
+            list.innerHTML = "";
+
+            videoData.comments.forEach(c => {
+                const item = document.createElement("div");
+                item.className = "comment-item";
+
+                const img = document.createElement("img");
+                img.className = "comment-pfp";
+                img.src = c.pfp || "https://via.placeholder.com/36";
+
+                const content = document.createElement("div");
+
+                const nameEl = document.createElement("div");
+                nameEl.className = "comment-name";
+                nameEl.textContent = c.name;
+
+                const textEl = document.createElement("div");
+                textEl.className = "comment-text";
+                textEl.textContent = c.text;
+
+                content.appendChild(nameEl);
+                content.appendChild(textEl);
+
+                item.appendChild(img);
+                item.appendChild(content);
+
+                list.prepend(item);
+            });
+
+            applyVoteState();
+        }
+
+        async function saveData() {
+            await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Master-Key": API_KEY
+                },
+                body: JSON.stringify(videoData)
+            });
+        }
+
+        async function likeVideo() {
+            if (likeBtn.disabled) return;
+
+            if (localStorage.getItem("disliked_sora") === "true") {
+                videoData.dislikes--;
+            }
+
+            videoData.likes++;
+
+            localStorage.setItem("liked_sora", "true");
+            localStorage.setItem("disliked_sora", "false");
+
+            saveData();
+            loadData();
+        }
+
+        async function dislikeVideo() {
+            if (dislikeBtn.disabled) return;
+
+            if (localStorage.getItem("liked_sora") === "true") {
+                videoData.likes--;
+            }
+
+            videoData.dislikes++;
+
+            localStorage.setItem("liked_sora", "false");
+            localStorage.setItem("disliked_sora", "true");
+
+            saveData();
+            loadData();
+        }
+
+        async function uploadPfp(file) {
+            const formData = new FormData();
+            formData.append("pfp", file);
+
+            const res = await fetch("http://127.0.0.1:3000/upload", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await res.json();
+            return data.url;
+        }
+
+        async function addComment() {
+            const name = document.getElementById("name-input").value.trim();
+            const text = document.getElementById("comment-input").value.trim();
+            const file = document.getElementById("pfp-input").files[0];
+
+            if (!name || !text) return;
+
+            let pfpUrl = "";
+            if (file) pfpUrl = await uploadPfp(file);
+
+            videoData.comments.push({ name, text, pfp: pfpUrl });
+
+            await saveData();
+            loadData();
+
+            document.getElementById("comment-input").value = "";
+            document.getElementById("pfp-input").value = "";
+        }
+
+        loadData();
+    </script>
+</body>
+</html>

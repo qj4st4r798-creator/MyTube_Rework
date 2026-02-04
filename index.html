@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MyTube Premium</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .SearchBar {
+            font-size: 20px;
+            margin: 12px;
+            padding: 6px;
+            width: 300px;
+        }
+
+        /* THUMBNAILS */
+        .thumbnail {
+            width: 310px;
+            height: 169px;
+            object-fit: cover;
+            display: block;
+            cursor: pointer;
+        }
+
+        /* VIDEO TEXT */
+        .video-title {
+            font-weight: bold;
+            margin: 6px 0;
+        }
+
+        .stats {
+            color: gray;
+            font-size: 14px;
+        }
+
+        /* LAYOUT */
+        .video-preview {
+            width: 300px;
+        }
+
+        .video-grid {
+            display: flex;
+            gap: 40px;
+            margin: 20px 12px;
+        }
+
+        /* CHANNEL */
+        .channel-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 4px 0;
+        }
+
+        .channel-pfp {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        a {
+            text-decoration: none;
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SEARCH -->
+    <input class="SearchBar" placeholder="Search" type="text">
+
+    <!-- VIDEO GRID -->
+    <div class="video-grid">
+
+        <!-- VIDEO 1 -->
+        <div class="video-preview">
+            <a href="watch.html">
+                <img class="thumbnail" src="Thumbnails/86739899-01b5-4ddb-b282-70e4ddd19492.png">
+            </a>
+
+            <p class="video-title">Sora AI Fat Cat</p>
+
+            <div class="channel-row">
+                <img class="channel-pfp" src="Thumbnails/SuckySuckyHair.jpg">
+                <p>@SuckySuckyHair</p>
+            </div>
+
+            <p class="stats">6 views &#183; 5 days ago</p>
+        </div>
+
+        <!-- VIDEO 2 -->
+        <div class="video-preview">
+            <a href="watch.html">
+                <img class="thumbnail" src="Thumbnails/unnamed (1).jpg">
+            </a>
+
+            <p class="video-title">CaseOh The Planet Devourer</p>
+
+            <div class="channel-row">
+                <img class="channel-pfp" src="Thumbnails/SuckySuckyHair.jpg">
+                <p>@SuckySuckyHair</p>
+            </div>
+
+            <p class="stats">8 views &#183; 3 days ago</p>
+        </div>
+
+    </div>
+
+</body>
+</html>
